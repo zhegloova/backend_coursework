@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Главная - Медицинская информационная система{% endblock %}
+
+{% block header %}Главная страница{% endblock %}
+
+{% block content %}
+<div class="welcome-section">
+    <h2>Добро пожаловать в Медицинскую информационную систему</h2>
+    <p>Выберите нужный раздел в меню навигации:</p>
+    <ul>
+        <li><a href="{% url 'patient_list' %}">Пациенты</a> - управление данными пациентов</li>
+        <li><a href="{% url 'medical_card_list' %}">Медицинские карты</a> - просмотр и редактирование медицинских карт</li>
+        <li><a href="{% url 'medical_record_list' %}">Медицинские записи</a> - история медицинских записей</li>
+    </ul>
+</div>
+{% endblock %} 

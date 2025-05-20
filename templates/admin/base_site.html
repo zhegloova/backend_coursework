@@ -1,0 +1,552 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    /* Основные цвета и переменные */
+    :root {
+        --primary: #ffb6c1;
+        --secondary: #ffc0cb;
+        --accent: #ffb6c1;
+        --primary-fg: #fff;
+        --success: #43a047;
+        --warning: #ffa000;
+        --error: #e53935;
+        --bg-light: #f5f5f5;
+        --text-dark: #333;
+        --border-radius: 8px;
+        --box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        --header-height: 70px;
+    }
+
+    /* Общие стили */
+    body {
+        background: var(--bg-light);
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+    }
+
+    /* Шапка */
+    #header {
+        background: linear-gradient(135deg, #ffb6c1, #ffc0cb);
+        color: var(--primary-fg);
+        padding: 0 2rem;
+        box-shadow: var(--box-shadow);
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: var(--header-height);
+        z-index: 1000;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    #branding h1 {
+        font-weight: 600;
+        font-size: 1.8rem;
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    #branding h1 a:link, #branding h1 a:visited {
+        color: var(--primary-fg);
+    }
+
+    /* Основной контент */
+    #content {
+        margin-top: var(--header-height);
+        padding: 2rem;
+        min-height: calc(100vh - var(--header-height));
+    }
+
+    #content-main {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        padding: 2rem;
+        margin-bottom: 2rem;
+        max-width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+        width: 1200px;
+        text-align: center;
+    }
+
+    /* Карточки на главной странице */
+    .app-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        padding: 1rem;
+    }
+
+    .app-item {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .app-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    }
+
+    .app-item h2 {
+        background: linear-gradient(135deg, #ffb6c1, #ffc0cb);
+        color: var(--primary-fg);
+        padding: 1.2rem;
+        margin: 0;
+        border-radius: var(--border-radius) var(--border-radius) 0 0;
+        font-size: 1.2rem;
+        font-weight: 500;
+    }
+
+    .app-item .model-list {
+        padding: 1.2rem;
+    }
+
+    .app-item .model-list li {
+        margin-bottom: 0.8rem;
+        list-style: none;
+    }
+
+    .app-item .model-list li:last-child {
+        margin-bottom: 0;
+    }
+
+    .app-item .model-list a {
+        display: flex;
+        align-items: center;
+        padding: 0.8rem;
+        color: var(--text-dark);
+        text-decoration: none;
+        border-radius: var(--border-radius);
+        transition: all 0.3s ease;
+    }
+
+    .app-item .model-list a:hover {
+        background: rgba(57, 73, 171, 0.05);
+        color: var(--accent);
+    }
+
+    .app-item .model-list .addlink {
+        color: var(--success);
+        font-weight: 500;
+    }
+
+    /* Страницы добавления/изменения */
+    .form-row {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-row label {
+        display: block;
+        font-weight: 500;
+        color: var(--text-dark);
+        margin-bottom: 0.8rem;
+    }
+
+    .form-row input, .form-row select, .form-row textarea {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid #ddd;
+        border-radius: var(--border-radius);
+        transition: all 0.3s ease;
+    }
+
+    .form-row input:focus, .form-row select:focus, .form-row textarea:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 2px rgba(57, 73, 171, 0.2);
+        outline: none;
+    }
+
+    .submit-row {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        padding: 1.5rem;
+        margin-top: 2rem;
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+    }
+
+    .submit-row input {
+        padding: 0.8rem 1.5rem;
+        border: none;
+        border-radius: var(--border-radius);
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .submit-row input[type="submit"] {
+        background: var(--accent);
+        color: white;
+    }
+
+    .submit-row input[type="submit"]:hover {
+        background: var(--primary);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .submit-row input[type="button"] {
+        background: #f5f5f5;
+        color: var(--text-dark);
+    }
+
+    .submit-row input[type="button"]:hover {
+        background: #e0e0e0;
+    }
+
+    /* Остальные стили остаются без изменений */
+    /* Кнопки */
+    .button, input[type=submit], input[type=button], .submit-row input {
+        background: var(--accent);
+        border: none;
+        border-radius: var(--border-radius);
+        padding: 0.8rem 1.5rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .button:hover, input[type=submit]:hover, input[type=button]:hover {
+        background: var(--primary);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    /* Таблицы */
+    #changelist {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        overflow: hidden;
+    }
+
+    #changelist table {
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        width: 100%;
+    }
+
+    #changelist table thead th {
+        background: var(--secondary);
+        color: var(--primary-fg);
+        padding: 1rem;
+        font-weight: 500;
+    }
+
+    #changelist table tbody tr:hover {
+        background: rgba(57, 73, 171, 0.05);
+    }
+
+    /* Сообщения */
+    .messagelist {
+        margin: 0 0 2rem 0;
+    }
+
+    .messagelist li {
+        padding: 1rem;
+        margin-bottom: 0.8rem;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+    }
+
+    .success {
+        background: var(--success);
+        color: white;
+    }
+
+    .warning {
+        background: var(--warning);
+        color: white;
+    }
+
+    .error {
+        background: var(--error);
+        color: white;
+    }
+
+    /* Карточки */
+    .module {
+        margin-bottom: 1.5rem;
+        border: none;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        background: white;
+        overflow: hidden;
+    }
+
+    .module h2, .module caption {
+        background: linear-gradient(135deg, #ffb6c1, #ffc0cb);
+        color: var(--primary-fg);
+        padding: 1rem;
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+
+    /* Ссылки */
+    a:link, a:visited {
+        color: var(--accent);
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    a:hover {
+        color: var(--primary);
+    }
+
+    /* Пагинация */
+    .paginator {
+        background: white;
+        padding: 1rem;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        margin-top: 1rem;
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .paginator a:link, .paginator a:visited {
+        padding: 0.5rem 1rem;
+        border-radius: var(--border-radius);
+        background: var(--accent);
+        color: white;
+    }
+
+    .paginator a:hover {
+        background: var(--primary);
+    }
+
+    /* Поиск */
+    #searchbar {
+        padding: 0.8rem;
+        border: 1px solid #ddd;
+        border-radius: var(--border-radius);
+        margin-bottom: 1rem;
+        width: 100%;
+    }
+
+    #searchbar:focus {
+        border-color: var(--accent);
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(57, 73, 171, 0.2);
+    }
+
+    /* Стили для ссылок в таблицах */
+    .addlink, .changelink {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem 1rem;
+        border-radius: var(--border-radius);
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+        color: #fff !important;
+    }
+
+    .addlink {
+        background: #ffb6c1;
+        color: #fff !important;
+    }
+
+    .addlink:hover {
+        background: #ffa4b2;
+        color: #fff !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .changelink {
+        background: #ffb6c1;
+        color: #fff !important;
+    }
+
+    .changelink:hover {
+        background: #ffa4b2;
+        color: #fff !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    /* Добавляем иконки к ссылкам */
+    .addlink::before {
+        content: "+";
+        margin-right: 0.5rem;
+        font-size: 1.1rem;
+        color: #fff !important;
+    }
+
+    .changelink::before {
+        content: "✎";
+        margin-right: 0.5rem;
+        font-size: 1.1rem;
+        color: #fff !important;
+    }
+
+    /* Стили для ячеек таблицы с кнопками */
+    #changelist table tbody td {
+        padding: 1rem;
+        vertical-align: middle;
+    }
+
+    #changelist table tbody td:last-child {
+        white-space: nowrap;
+    }
+
+    /* Стили для страницы логина */
+    .login {
+        background: var(--bg-light) !important;
+        padding: 2rem !important;
+        min-height: 100vh !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    .login #container {
+        background: white !important;
+        border-radius: var(--border-radius) !important;
+        box-shadow: var(--box-shadow) !important;
+        padding: 2rem !important;
+        width: 100% !important;
+        max-width: 400px !important;
+    }
+
+    .login #header {
+        position: static !important;
+        padding: 0 !important;
+        margin-bottom: 2rem !important;
+        background: none !important;
+        box-shadow: none !important;
+    }
+
+    .login #content {
+        margin-top: 0 !important;
+        padding: 0 !important;
+    }
+
+    .login #content-main {
+        padding: 0 !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        background: none !important;
+    }
+
+    .login .form-row {
+        padding: 1rem 0 !important;
+        margin-bottom: 1rem !important;
+        background: none !important;
+        box-shadow: none !important;
+    }
+
+    .login .form-row label {
+        color: var(--text-dark) !important;
+        font-weight: 500 !important;
+        display: block !important;
+        margin-bottom: 0.5rem !important;
+    }
+
+    .login .form-row input {
+        color: var(--text-dark) !important;
+        background: white !important;
+        border: 1px solid #ddd !important;
+        border-radius: var(--border-radius) !important;
+        padding: 0.8rem !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .login .form-row input:focus {
+        border-color: var(--accent) !important;
+        box-shadow: 0 0 0 2px rgba(255, 182, 193, 0.2) !important;
+        outline: none !important;
+    }
+
+    .login .submit-row {
+        padding: 1rem 0 0 0 !important;
+        margin: 0 !important;
+        background: none !important;
+        box-shadow: none !important;
+        text-align: center !important;
+    }
+
+    .login .submit-row input {
+        width: 100% !important;
+        padding: 0.8rem !important;
+        font-size: 1rem !important;
+        color: white !important;
+        background: var(--accent) !important;
+        border: none !important;
+        border-radius: var(--border-radius) !important;
+        cursor: pointer !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .login .submit-row input:hover {
+        background: #ffa4b2 !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2) !important;
+    }
+
+    .login .password-reset-link {
+        text-align: center !important;
+        margin-top: 1rem !important;
+    }
+
+    .login .password-reset-link a {
+        color: var(--accent) !important;
+        text-decoration: none !important;
+    }
+
+    .login .password-reset-link a:hover {
+        color: #ffa4b2 !important;
+    }
+
+    /* Стили для иконок */
+    .base-svgs {
+        display: none;
+    }
+
+    #icon-sun {
+        background: transparent !important;
+    }
+
+    #icon-sun path:first-child {
+        fill: transparent !important;
+    }
+
+    #icon-sun path:last-child {
+        fill: #fff !important;
+    }
+</style>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+    <a href="{% url 'admin:index' %}">
+        <span style="font-weight: 300;">Медицинская</span> информационная система
+    </a>
+</h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %} 

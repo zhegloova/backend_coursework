@@ -1,0 +1,69 @@
+{% load i18n %}
+
+<div id="nav-sidebar">
+    <div class="sidebar-header">
+        <h2>Навигация</h2>
+    </div>
+    <div class="sidebar-menu">
+        <a href="{% url 'admin:index' %}" class="sidebar-item {% if request.path == '/admin/' %}active{% endif %}">
+            <span class="sidebar-icon">🏠</span>
+            Главная
+        </a>
+        <a href="{% url 'admin:auth_user_changelist' %}" class="sidebar-item {% if 'auth/user' in request.path %}active{% endif %}">
+            <span class="sidebar-icon">👥</span>
+            Пользователи
+        </a>
+        <a href="{% url 'admin:medical_cards_medicalcard_changelist' %}" class="sidebar-item {% if 'medical_cards/medicalcard' in request.path %}active{% endif %}">
+            <span class="sidebar-icon">📋</span>
+            Медицинские карты
+        </a>
+        <a href="{% url 'admin:patients_patient_changelist' %}" class="sidebar-item {% if 'patients/patient' in request.path %}active{% endif %}">
+            <span class="sidebar-icon">👤</span>
+            Пациенты
+        </a>
+    </div>
+</div>
+
+<style>
+    .sidebar-header {
+        padding: 1.5rem 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar-header h2 {
+        color: var(--primary-fg);
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 500;
+    }
+
+    .sidebar-menu {
+        padding: 1rem 0;
+    }
+
+    .sidebar-item {
+        display: flex;
+        align-items: center;
+        padding: 0.8rem 1.5rem;
+        color: var(--text-dark);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border-left: 3px solid transparent;
+    }
+
+    .sidebar-item:hover {
+        background: rgba(57, 73, 171, 0.05);
+        color: var(--accent);
+    }
+
+    .sidebar-item.active {
+        background: rgba(57, 73, 171, 0.1);
+        color: var(--accent);
+        border-left-color: var(--accent);
+    }
+
+    .sidebar-icon {
+        margin-right: 0.8rem;
+        font-size: 1.2rem;
+    }
+</style> 

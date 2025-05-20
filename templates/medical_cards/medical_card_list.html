@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Список медицинских карт{% endblock %}
+
+{% block header %}Список медицинских карт{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Медицинские карты</h2>
+    </div>
+    <div class="card-body">
+        <a href="{% url 'medical_card_create' %}" class="btn btn-primary">Создать медицинскую карту</a>
+        
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Пациент</th>
+                    <th>Группа крови</th>
+                    <th>Аллергии</th>
+                    <th>Хронические заболевания</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for card in medical_cards %}
+                <tr>
+                    <td>{{ card.patient }}</td>
+                    <td>{{ card.blood_type }}</td>
+                    <td>{{ card.allergies|default:"Нет" }}</td>
+                    <td>{{ card.chronic_diseases|default:"Нет" }}</td>
+                    <td>
+                        <a href="{% url 'medical_card_detail' card.pk %}" class="btn btn-primary">Просмотр</a>
+                        <a href="{% url 'medical_card_update' card.pk %}" class="btn btn-primary">Редактировать</a>
+                        <a href="{% url 'medical_card_delete' card.pk %}" class="btn btn-danger">Удалить</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">Нет доступных медицинских карт</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %} 

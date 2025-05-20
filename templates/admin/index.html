@@ -1,0 +1,93 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" href="{% static "admin/css/dashboard.css" %}">{% endblock %}
+
+{% block coltype %}colMS{% endblock %}
+
+{% block bodyclass %}{{ block.super }} dashboard{% endblock %}
+
+{% block breadcrumbs %}{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <div class="app-list">
+        <!-- Пользователи -->
+        <div class="app-item">
+            <h2>Пользователи</h2>
+            <div class="model-list">
+                <ul>
+                    <li>
+                        <a href="{% url 'admin:auth_user_changelist' %}">Пользователи</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'admin:auth_user_add' %}" class="addlink">Добавить пользователя</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Группы -->
+        <div class="app-item">
+            <h2>Группы</h2>
+            <div class="model-list">
+                <ul>
+                    <li>
+                        <a href="{% url 'admin:auth_group_changelist' %}">Группы</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'admin:auth_group_add' %}" class="addlink">Добавить группу</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Пациенты -->
+        <div class="app-item">
+            <h2>Пациенты</h2>
+            <div class="model-list">
+                <ul>
+                    <li>
+                        <a href="{% url 'admin:patients_patient_changelist' %}">Пациенты</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'admin:patients_patient_add' %}" class="addlink">Добавить пациента</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Медицинские карты -->
+        <div class="app-item">
+            <h2>Медицинские карты</h2>
+            <div class="model-list">
+                <ul>
+                    <li>
+                        <a href="{% url 'admin:medical_cards_medicalcard_changelist' %}">Медицинские карты</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'admin:medical_cards_medicalcard_add' %}" class="addlink">Добавить медицинскую карту</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Записи в медицинской карте -->
+        <div class="app-item">
+            <h2>Записи в медицинской карте</h2>
+            <div class="model-list">
+                <ul>
+                    <li>
+                        <a href="{% url 'admin:medical_cards_medicalrecord_changelist' %}">Записи в медицинской карте</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'admin:medical_cards_medicalrecord_add' %}" class="addlink">Добавить запись</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block sidebar %}{% endblock %} 
